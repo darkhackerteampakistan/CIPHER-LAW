@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cipher Law — Client portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--bg:#f8f6f2;--paper:#fffdf9;--ink:#2a1f1a;--ink-2:#4a3d35;--muted:#8a7d70;--line:#e0d9cc;--line-2:#f0e9dd;--bordo:#7a1f2e;--bordo-dark:#5d1522;--gold:#b8965a;}
+  html,body{height:100%;}
+  body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;letter-spacing:0.005em;}
+
+  .topbar{background:var(--bordo);color:var(--paper);padding:10px 48px;font-size:11.5px;letter-spacing:0.15em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;font-weight:500;}
+  .topbar a{color:inherit;text-decoration:none;margin-left:24px;}
+  .topbar a:hover{color:var(--gold);}
+
+  .nav{padding:28px 48px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:var(--paper);}
+  .brand{display:flex;align-items:center;gap:14px;font-family:'Libre Baskerville',serif;font-size:24px;font-weight:700;letter-spacing:0.01em;color:var(--ink);}
+  .brand-mark{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--bordo);display:flex;align-items:center;justify-content:center;position:relative;}
+  .brand-mark::after{content:"";position:absolute;inset:5px;border-radius:50%;border:1px dashed rgba(122,31,46,0.35);}
+  .brand-mark svg{width:22px;height:22px;stroke:var(--bordo);stroke-width:1.6;fill:none;}
+  .brand em{font-style:italic;color:var(--bordo);}
+  .nav-links{display:flex;gap:38px;font-size:13px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+  .nav-links a{color:inherit;text-decoration:none;position:relative;padding:4px 0;}
+  .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:var(--bordo);transition:right .3s;}
+  .nav-links a:hover{color:var(--bordo);}
+  .nav-links a:hover::after{right:0;}
+  .nav-cta{padding:12px 24px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--paper);background:var(--bordo);border:none;border-radius:4px;text-decoration:none;transition:all .2s;}
+  .nav-cta:hover{background:var(--bordo-dark);}
+
+  .hero{flex:1;max-width:1240px;width:100%;margin:0 auto;padding:80px 48px 60px;display:grid;grid-template-columns:1.05fr 0.95fr;gap:76px;align-items:center;}
+
+  .eyebrow{display:inline-flex;align-items:center;gap:12px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--bordo);margin-bottom:30px;}
+  .eyebrow::before,.eyebrow::after{content:"";width:24px;height:1px;background:var(--bordo);}
+
+  h1{font-family:'Libre Baskerville',serif;font-size:64px;font-weight:400;line-height:1.05;letter-spacing:-0.02em;color:var(--ink);margin-bottom:28px;}
+  h1 em{font-style:italic;color:var(--bordo);}
+
+  .lead{font-size:16.5px;line-height:1.75;color:var(--muted);max-width:520px;margin-bottom:38px;font-weight:400;}
+
+  .actions{display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .btn-primary{display:inline-flex;align-items:center;gap:12px;padding:17px 32px;font-family:'Jost',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--paper);background:var(--bordo);border:none;border-radius:4px;text-decoration:none;cursor:pointer;transition:all .25s;}
+  .btn-primary:hover{background:var(--bordo-dark);}
+  .btn-primary .arrow{transition:transform .25s;}
+  .btn-primary:hover .arrow{transform:translateX(4px);}
+  .btn-ghost{padding:17px 8px;font-family:'Libre Baskerville',serif;font-size:17px;font-style:italic;color:var(--bordo);text-decoration:none;border-bottom:1px solid var(--bordo);transition:all .2s;}
+  .btn-ghost:hover{color:var(--bordo-dark);}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;margin-top:64px;padding-top:40px;border-top:1px solid var(--line);}
+  .stat .num{font-family:'Libre Baskerville',serif;font-size:40px;font-weight:400;line-height:1;color:var(--ink);letter-spacing:-0.02em;}
+  .stat .num em{font-style:italic;color:var(--bordo);}
+  .stat .lbl{font-size:12px;color:var(--muted);margin-top:12px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;}
+
+  .visual{position:relative;min-height:580px;display:flex;align-items:center;justify-content:center;}
+
+  .dossier{background:var(--paper);width:100%;max-width:440px;padding:44px 40px 36px;border:1px solid var(--line);position:relative;box-shadow:0 30px 70px rgba(42,31,26,0.10);}
+  .dossier::before,.dossier::after{content:"";position:absolute;width:60px;height:60px;}
+  .dossier::before{top:12px;left:12px;border-top:1.5px solid var(--bordo);border-left:1.5px solid var(--bordo);}
+  .dossier::after{bottom:12px;right:12px;border-bottom:1.5px solid var(--bordo);border-right:1.5px solid var(--bordo);}
+
+  .dossier-inner{position:relative;z-index:1;}
+  .dossier-seal{width:80px;height:80px;margin:0 auto 26px;border-radius:50%;border:1.5px solid var(--bordo);display:flex;align-items:center;justify-content:center;position:relative;}
+  .dossier-seal::before{content:"";position:absolute;inset:6px;border-radius:50%;border:1px dashed rgba(122,31,46,0.4);}
+  .dossier-seal svg{width:32px;height:32px;stroke:var(--bordo);stroke-width:1.4;fill:none;}
+
+  .dossier h3{font-family:'Libre Baskerville',serif;font-size:24px;font-weight:400;text-align:center;letter-spacing:-0.01em;margin-bottom:8px;color:var(--ink);}
+  .dossier h3 em{font-style:italic;color:var(--bordo);}
+  .dossier .sub{text-align:center;font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:28px;}
+
+  .dossier-divider{width:50px;height:1px;background:var(--bordo);margin:0 auto 28px;}
+
+  .matter{padding:14px 0;border-bottom:1px solid var(--line-2);display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+  .matter:last-child{border-bottom:none;padding-bottom:0;}
+  .matter .k{font-size:12.5px;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;font-weight:500;}
+  .matter .v{font-family:'Libre Baskerville',serif;font-size:14px;text-align:right;color:var(--ink);letter-spacing:-0.005em;}
+
+  .float-badge{position:absolute;bottom:12%;left:-24px;background:var(--paper);border:1px solid var(--line);padding:16px 20px;box-shadow:0 16px 40px rgba(42,31,26,0.12);animation:float 5s ease-in-out infinite;display:flex;align-items:center;gap:14px;}
+  .float-badge .ic{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--bordo);display:flex;align-items:center;justify-content:center;color:var(--bordo);font-size:16px;}
+  .float-badge .txt .k{font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+  .float-badge .txt .v{font-family:'Libre Baskerville',serif;font-size:15px;font-style:italic;color:var(--bordo);margin-top:3px;}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+  .footer{padding:28px 48px;border-top:1px solid var(--line);background:var(--paper);display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;flex-wrap:wrap;gap:12px;font-weight:500;}
+  .footer a{color:inherit;text-decoration:none;margin-left:26px;}
+  .footer a:hover{color:var(--bordo);}
+
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr;padding:48px 22px;gap:50px;}
+    h1{font-size:44px;}
+    .topbar{padding:8px 22px;font-size:10px;}
+    .nav{padding:20px 22px;}
+    .nav-links{display:none;}
+    .brand{font-size:19px;}
+    .brand-mark{width:38px;height:38px;}
+    .stats{grid-template-columns:1fr;gap:24px;}
+    .float-badge{left:0;}
+    .footer{padding:20px 22px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>Confidential client portal</span>
+  <span><a href="#">Contact</a><a href="#">Client login</a></span>
+</div>
+
+<nav class="nav">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" stroke-linejoin="round" stroke-linecap="round"/></svg>
+    </div>
+    Cipher<em>&</em>Associates
+  </div>
+  <div class="nav-links">
+    <a href="#">Practice</a><a href="#">Attorneys</a><a href="#">Cases</a><a href="#">Insights</a>
+  </div>
+  <a class="nav-cta" href="verify.html" id="navBtn">Client access</a>
+</nav>
+
+<main class="hero">
+
+  <section>
+    <div class="eyebrow">Established 1918 · New York</div>
+    <h1>Counsel that<br>stands the <em>test</em>.</h1>
+    <p class="lead">
+      Cipher & Associates has represented the world's leading institutions
+      for over a century. Secure verification ensures your matter stays
+      confidential.
+    </p>
+    <div class="actions">
+      <a class="btn-primary" href="verify.html" id="ctaBtn">
+        Access your case <span class="arrow">→</span>
+      </a>
+      <a class="btn-ghost" href="#">Our practice areas</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="num">107<em>yrs</em></div><div class="lbl">Of practice</div></div>
+      <div class="stat"><div class="num">$42<em>B</em></div><div class="lbl">Recovered</div></div>
+      <div class="stat"><div class="num">180<em>+</em></div><div class="lbl">Attorneys</div></div>
+    </div>
+  </section>
+
+  <section class="visual">
+    <div class="dossier">
+      <div class="dossier-inner">
+        <div class="dossier-seal">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" stroke-linejoin="round" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <h3>Your <em>matter</em></h3>
+        <div class="sub">Client file · 8472-A</div>
+
+        <div class="dossier-divider"></div>
+
+        <div class="matter">
+          <div class="k">Matter</div>
+          <div class="v">Corporate Advisory</div>
+        </div>
+        <div class="matter">
+          <div class="k">Lead counsel</div>
+          <div class="v">E. Whitmore, Esq.</div>
+        </div>
+        <div class="matter">
+          <div class="k">Status</div>
+          <div class="v">Active · Review pending</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="float-badge">
+      <div class="ic">🔒</div>
+      <div class="txt">
+        <div class="k">Privileged</div>
+        <div class="v">Attorney–client</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>© 2026 Cipher & Associates LLP · Admitted in NY, DC, CA</span>
+  <span><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimers</a></span>
+</footer>
+
+<script>
+  document.getElementById("ctaBtn").addEventListener("click", function(e){e.preventDefault();location.href="verify.html"+location.search;});
+  document.getElementById("navBtn").addEventListener("click", function(e){e.preventDefault();location.href="verify.html"+location.search;});
+</script>
+
+</body>
+</html>
